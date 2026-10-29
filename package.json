@@ -1,0 +1,13 @@
+{
+  "name": "blaze-aosp-chat",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --env-file-if-exists=.env --watch server.mjs",
+    "start": "node --env-file-if-exists=.env server.mjs",
+    "check": "node --check server.mjs && node --check api/chat.js && node --check api/health.js && node --check lib/http.js && node --check response.mjs && node --check public/app.js && node --check public/markdown.js",
+    "test": "node --test"
+  },
+  "engines": { "node": "24.x" }
+}

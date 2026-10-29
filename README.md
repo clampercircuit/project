@@ -1,0 +1,63 @@
+# Project Blaze — AOSP documentation chat
+
+A minimal dark chat UI connected to an n8n production webhook, with a local Node.js server and Vercel API functions. The design follows the dark palette of https://www.projectblaze.co.in/ (navy `#080e16`, blue `#388efa`, flame `#ff8a3f`). The wordmark is downloaded from that site's public `brand.png` asset. No application dependencies or asset compilation are required.
+
+## Run
+
+Requires Node.js 24.x. On first setup, copy `.env.example` to `.env` and set `WEBHOOK_URL` to your active n8n production webhook URL. The existing local setup already has its `.env` configured. Both start scripts load `.env` automatically; shell environment variables take precedence.
+
+```powershell
+cd C:\Users\Vaibhav\Desktop\mini_project\chat-ui
+npm run dev
+```
+
+Open **http://localhost:3000**. `npm start` runs without automatic server restarts. HTML, CSS, and browser JavaScript edits appear after refreshing the page.
+
+## Connection
+
+The browser sends `POST /api/chat` to the app server. The server forwards a GET request with a `message` query parameter to the server-side `WEBHOOK_URL` environment variable. The URL is never sent to the browser.
+
+This proxy avoids browser CORS restrictions. The n8n workflow must be published/active. It can return plain text, a JSON string, an object with an `answer`, `response`, or `text` field, or a full OpenAI Responses API object. Full response objects are parsed by message type, never a fixed array index. Native citation annotations are preserved when supplied. Plain-text responses cannot expose citation metadata that the workflow has removed.
+
+Only explicit message submissions trigger the webhook. Page loads, starter questions, and New chat make no model calls. Starter questions fill the composer; press Send to submit. Requests do not automatically retry. Each Send or Try again action can incur backend/API charges.
+
+The interface keeps the current conversation in memory. New chat or refreshing the page clears it. No chat history database, sidebar, or account features are included. The existing workflow receives only the current question, not previous turns. Use complete questions rather than depending on conversational memory.
+
+## Configuration
+
+Required: `WEBHOOK_URL`, the active n8n production webhook URL. There is no hardcoded fallback. Missing or invalid configuration returns HTTP 503 when a question is submitted.
+
+Optional for local development: `PORT` (default `3000`). The local server listens only on `127.0.0.1` and serves only `public/`, not the documentation corpus or project files.
+
+`.env` and `.env.*` are excluded by `.gitignore` and `.vercelignore`; `.env.example` contains placeholders and can be shared. Keep webhook URLs and credentials out of committed source. OpenAI credentials remain configured in n8n.
+
+```powershell
+$env:PORT = '3001'
+npm start
+```
+
+## Deploy to Vercel
+
+1. Set the Vercel project's **Root Directory** to `chat-ui` when importing the whole project. If uploading only this folder, use it as the project root.
+2. Use framework preset **Other**. `vercel.json` sets the build command to `npm run check` and the output directory to `public`; keep those settings.
+3. In **Settings → Environment Variables**, add `WEBHOOK_URL` with the same value as your local `.env`. Select **Production** and **Preview** if both should use that workflow. Add Development only if using Vercel's local tools.
+4. Deploy, or redeploy after changing environment variables.
+
+Vercel serves the static assets and runs `api/chat.js` and `api/health.js` as Node.js functions. The local server uses these same handlers. Origin checks use the request host, so production, preview, and custom domains work without another environment variable. The webhook request times out after 85 seconds; the Vercel function is configured for 90 seconds with Fluid compute enabled.
+
+Do not add `PORT` or an OpenAI API key to Vercel for this app. Check `/api/health` for server availability. This endpoint does not call n8n or validate the upstream workflow.
+
+## Files
+
+- `server.mjs`: local static server using the shared API handlers.
+- `api/chat.js`: chat validation and webhook proxy, also deployed as a Vercel function.
+- `api/health.js`: health endpoint for local and Vercel deployments.
+- `lib/http.js`: shared response helpers and security headers.
+- `vercel.json`: static hosting and function configuration.
+- `response.mjs`: normalization of plain text and structured workflow responses.
+- `public/index.html`: app structure.
+- `public/styles.css`: responsive layout and styles.
+- `public/app.js`: minimal chat behavior and error handling.
+- `public/markdown.js`: safe Markdown rendering for answers, links, code, and tables.
+
+`npm run check` verifies JavaScript syntax. `npm test` checks API validation, local and Vercel body handling, and upstream responses using a mock webhook; it makes no model calls. Chat answers are generated by the existing workflow and can contain mistakes; the UI does not independently validate technical claims.

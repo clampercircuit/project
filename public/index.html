@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#080e16">
+  <meta name="description" content="A minimal AOSP documentation chat demo for Project Blaze.">
+  <title>Project Blaze — AOSP Chat</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="stylesheet" href="/styles.css">
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <svg class="icon-library" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="m6 12 6-6 6 6M12 6v13"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V4H4v12h4"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 3 2.4 6.6L21 12l-6.6 2.4L12 21l-2.4-6.6L3 12l6.6-2.4Z"/></symbol>
+    <symbol id="i-doc" viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9Zm0 0v6h6M8 13h8M8 17h5"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+  </svg>
+
+  <div class="app">
+    <header class="header">
+      <div class="header-inner">
+        <a class="brand" href="/" aria-label="Project Blaze chat home"><img src="/brand.png" alt="Project Blaze" width="170" height="77"><span class="demo-badge">DEMO</span></a>
+        <div class="header-actions"><span class="scope-label"><span></span>AOSP documentation</span><button class="new-chat" id="new-chat" type="button"> <svg><use href="#i-plus"/></svg><span>New chat</span></button></div>
+      </div>
+    </header>
+
+    <main class="chat-scroll" id="chat-scroll">
+      <section class="welcome" id="welcome" aria-labelledby="welcome-title">
+        <div class="hero-icon" aria-hidden="true"><svg><use href="#i-doc"/></svg><span class="icon-spark"></span></div>
+        <p class="eyebrow">PROJECT BLAZE / DOCUMENTATION ASSISTANT</p>
+        <h1 id="welcome-title">Your AOSP docs.<br><span>A clearer answer.</span></h1>
+        <p class="description">Ask about Android setup, source control, builds, and internals.<br class="desktop-break"> Get answers from your documentation, in one conversation.</p>
+        <div class="suggestions" aria-label="Sample questions">
+          <button class="suggestion" data-question="What are the prerequisites, steps, and commands to download AOSP, select a build target, and build Android?">How do I build AOSP from scratch?<svg><use href="#i-chevron"/></svg></button>
+          <button class="suggestion" data-question="Several developers on our shared network are hitting quota errors during repo sync. What does the documentation recommend to fix this?">Why is repo sync hitting quota limits?<svg><use href="#i-chevron"/></svg></button>
+          <button class="suggestion" data-question="Compare the user, userdebug, and eng Android build variants. Which should I choose for development versus production?">Which build variant should I choose?<svg><use href="#i-chevron"/></svg></button>
+        </div>
+      </section>
+      <section class="messages" id="messages" aria-label="Conversation" aria-live="polite" aria-relevant="additions text" hidden></section>
+    </main>
+
+    <footer class="composer-area">
+      <form class="composer" id="chat-form">
+        <label class="sr-only" for="message-input">Your AOSP question</label>
+        <textarea id="message-input" name="message" rows="1" maxlength="4000" placeholder="Ask anything about AOSP…" required></textarea>
+        <div class="composer-bottom"><span class="composer-note"><svg><use href="#i-doc"/></svg>10 AOSP reference pages</span><div class="composer-actions"><span class="keyboard-hint">Enter to send</span><span id="character-count"></span><button id="send-button" class="send-button" type="submit" disabled aria-label="Send message" title="Send message"><svg><use href="#i-arrow"/></svg></button></div></div>
+      </form>
+      <p class="disclaimer">Answers can contain mistakes. Verify important details against the source.</p>
+    </footer>
+  </div>
+  <div id="toast" class="toast" role="status" hidden></div>
+</body>
+</html>
